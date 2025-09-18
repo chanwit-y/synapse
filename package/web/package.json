@@ -1,25 +1,19 @@
 {
-  "name": "synapse",
-  "module": "index.ts",
-  "type": "module",
+  "name": "web",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  },
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "serve:ui": "cd package/web && bun run dev",
-    "serve:api": "cd package/api && bun run dev",
-    "serve": "bun run serve:ui & bun run serve:api"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "elysia": "latest",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@eslint/js": "^9.35.0",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
@@ -31,8 +25,5 @@
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.43.0",
     "vite": "^7.1.6"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
   }
 }
