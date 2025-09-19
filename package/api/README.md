@@ -1,15 +1,25 @@
-# Elysia with Bun runtime
-
-## Getting Started
-To get started with this template, simply paste this command into your terminal:
-```bash
-bun create elysia ./elysia-example
+- ใช้ generate migration file
+- มันจะดู diff ระหว่าง schema ที่คุณเขียนใน schema.ts กับ DB (หรือ snapshot ล่าสุด)
+- แล้วสร้างไฟล์ migration .sql อัตโนมัติไว้ใน /drizzle/migrations/
+- ยังไม่ได้ apply ลง DB นะ แค่ generate ไฟล์
+```sh
+npx drizzle-kit generate
 ```
 
-## Development
-To start the development server run:
-```bash
-bun run dev
+- ใช้ generate migration file
+- มันจะดู diff ระหว่าง schema ที่คุณเขียนใน schema.ts กับ DB (หรือ snapshot ล่าสุด)
+- แล้วสร้างไฟล์ migration .sql อัตโนมัติไว้ใน /drizzle/migrations/
+- ยังไม่ได้ apply ลง DB นะ แค่ generate ไฟล์
+```sh
+npx drizzle-kit migrate
 ```
 
-Open http://localhost:3000/ with your browser to see the result.
+- ทางลัด มันจะ push ขึ้นไปเลย แต่ไม่แน่นำให้ใช้ เพราะจะไม่มี file migration
+```sh
+npx drizzle-kit push
+```
+
+supabase enable vector extension
+```sql
+create extension if not exists vector;
+```
