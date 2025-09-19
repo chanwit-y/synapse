@@ -14,22 +14,36 @@
     "serve": "bun run serve:ui & bun run serve:api"
   },
   "dependencies": {
+    "@langchain/community": "^0.3.56",
+    "@langchain/core": "^0.3.77",
+    "@langchain/google-genai": "^0.2.18",
+    "@langchain/openai": "^0.6.13",
+    "@langchain/tavily": "^0.1.5",
+    "@langchain/xai": "^0.1.0",
     "@tailwindcss/vite": "^4.1.13",
+    "dotenv": "^17.2.2",
+    "drizzle-orm": "^0.44.5",
     "elysia": "latest",
+    "langchain": "^0.3.34",
+    "pg": "^8.16.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.13",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "@eslint/js": "^9.35.0",
+    "@types/bun": "latest",
+    "@types/pg": "^8.15.5",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.35.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.4.0",
+    "tsx": "^4.20.5",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.43.0",
     "vite": "^7.1.6"
