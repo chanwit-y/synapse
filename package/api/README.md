@@ -5,11 +5,7 @@
 ```sh
 npx drizzle-kit generate
 ```
-
-- ใช้ generate migration file
-- มันจะดู diff ระหว่าง schema ที่คุณเขียนใน schema.ts กับ DB (หรือ snapshot ล่าสุด)
-- แล้วสร้างไฟล์ migration .sql อัตโนมัติไว้ใน /drizzle/migrations/
-- ยังไม่ได้ apply ลง DB นะ แค่ generate ไฟล์
+- migrate ขึ้น db
 ```sh
 npx drizzle-kit migrate
 ```

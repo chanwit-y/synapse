@@ -1,11 +1,11 @@
-import { integer, pgTable, varchar, text, vector, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, varchar, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { categoryTable } from "./category";
 
 export const noteTable = pgTable("note", {
-    id: varchar({ length: 36 }).primaryKey().default('uuid_generate_v4()'),
+    id: uuid().defaultRandom().primaryKey(),
     name: varchar({ length: 255 }).notNull(),
-    categoryId: varchar({ length: 36 }).references(() => categoryTable.id),
-    content: text().notNull(),
+    categoryId: uuid().references(() => categoryTable.id),
+    content: text().notNull(), //full content
     createdBy: varchar({ length: 36 }).notNull(),
     updatedBy: varchar({ length: 36 }).notNull(),
     createdAt: timestamp({ mode: "string", withTimezone: true })
