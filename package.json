@@ -14,6 +14,7 @@
     "serve": "bun run serve:ui & bun run serve:api"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
     "@tailwindcss/vite": "^4.1.13",
     "elysia": "latest",
     "react": "^19.1.1",
