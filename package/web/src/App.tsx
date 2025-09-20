@@ -1,3 +1,4 @@
+import Block from "./components/Editor/block"
 import { DemoDnd } from "./components/Editor/demo-dnd"
 
 function App() {
@@ -8,7 +9,8 @@ function App() {
         Hello world!
       </h1>
       <hr />
-      <DemoDnd />
+      {/* <DemoDnd /> */}
+      <Block id="1" />
     </>
   )
 }
