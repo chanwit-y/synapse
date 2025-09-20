@@ -7,7 +7,7 @@ import BlockItem from "./BlockItem";
 type BlockProps = {
 	id: string;
 }
-const Block = forwardRef<ElementRef<"div">, BlockProps>(({ id }) => {
+const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(({ id }) => {
 
 	const [items, setItems] = useState([
 		{ id: '1', content: '1', color: '#ff6b6b' },
@@ -43,7 +43,13 @@ const Block = forwardRef<ElementRef<"div">, BlockProps>(({ id }) => {
 			strategy={verticalListSortingStrategy}
 		>
 			{items.map((item) => (
-				<BlockItem key={item.id} id={item.id} color={item.color}>
+				<BlockItem 
+					key={item.id} 
+					id={item.id} 
+					color={item.color}
+					onEditMode={(id) => {
+console.log(id)
+					}}>
 					{item.content}
 				</BlockItem>
 			))}
@@ -51,6 +57,6 @@ const Block = forwardRef<ElementRef<"div">, BlockProps>(({ id }) => {
 	</DndContext>)
 })
 
-Block.displayName = "Block";
+BlockEditor.displayName = "Block";
 
-export default Block;
+export default BlockEditor;

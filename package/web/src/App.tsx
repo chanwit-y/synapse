@@ -1,4 +1,4 @@
-import Block from "./components/Editor/block"
+import BlockEditor from "./components/Editor/BlockEditor"
 import { DemoDnd } from "./components/Editor/demo-dnd"
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       </h1>
       <hr />
       {/* <DemoDnd /> */}
-      <Block id="1" />
+      <BlockEditor id="1" />
     </>
   )
 }
