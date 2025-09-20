@@ -62,9 +62,6 @@ const SortableItem = ({ id, children, color }: DraggableItemProps) => {
 
 	return (
 		<div ref={setNodeRef} style={style} {...attributes}>
-			<div style={{ flex: 1 }}>
-				{children}
-			</div>
 			<div 
 				style={handleStyle}
 				{...listeners}
@@ -76,6 +73,9 @@ const SortableItem = ({ id, children, color }: DraggableItemProps) => {
 				}}
 			>
 				<MoveIcon />
+			</div>
+			<div style={{ flex: 1 }}>
+				{children}
 			</div>
 		</div>
 	);
