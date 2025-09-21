@@ -117,7 +117,6 @@ const BlockItem = forwardRef<ElementRef<"div">, BlockItemProps>(
 				<MoveIcon />
 			</div>
 			<div className="flex gap-1 flex-1 items-center">
-				<div>[^]</div>
 				{isEditing ? <input
 					type="text"
 					ref={inputRef}

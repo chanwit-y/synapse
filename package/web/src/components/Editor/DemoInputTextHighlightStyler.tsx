@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bold, Italic, Underline, Type, Palette, X } from 'lucide-react';
+import { Bold, Italic, Underline, X } from 'lucide-react';
 
 interface TextSegment {
   text: string;
@@ -35,6 +35,7 @@ const DemoRichTextInputStyler: React.FC = () => {
   ]);
   
   const [showPopover, setShowPopover] = useState<boolean>(false);
+  const [isPopoverVisible, setIsPopoverVisible] = useState<boolean>(false);
   const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [currentSelection, setCurrentSelection] = useState<Selection | null>(null);
   const [activeField, setActiveField] = useState<'input' | 'textarea' | null>(null);
@@ -51,6 +52,22 @@ const DemoRichTextInputStyler: React.FC = () => {
   const inputRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+
+  // Helper functions for popover animations
+  const showPopoverWithAnimation = () => {
+    setShowPopover(true);
+    // Trigger fade in after render
+    setTimeout(() => setIsPopoverVisible(true), 10);
+  };
+
+  const hidePopover = () => {
+    setIsPopoverVisible(false);
+    // Hide popover after fade out animation completes
+    setTimeout(() => {
+      setShowPopover(false);
+      setCurrentSelection(null);
+    }, 200);
+  };
 
   // Convert segments to plain text
   const segmentsToText = (segments: TextSegment[]) => {
@@ -89,7 +106,6 @@ const DemoRichTextInputStyler: React.FC = () => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
     
-    const range = selection.getRangeAt(0);
     const selectedText = selection.toString();
     
     if (selectedText.trim()) {
@@ -106,12 +122,11 @@ const DemoRichTextInputStyler: React.FC = () => {
       setCurrentSelection({ start, end, text: selectedText });
       setActiveField(fieldType);
       setPopoverPosition({ x, y });
-      setShowPopover(true);
+      showPopoverWithAnimation();
       
       console.log('Selected text:', selectedText);
     } else {
-      setShowPopover(false);
-      setCurrentSelection(null);
+      hidePopover();
     }
   };
 
@@ -127,9 +142,8 @@ const DemoRichTextInputStyler: React.FC = () => {
     console.log('Applied styles:', textStyles);
     console.log('Updated segments:', newSegments);
     
-    // Close popover
-    setShowPopover(false);
-    setCurrentSelection(null);
+    // Close popover with animation
+    hidePopover();
   };
 
   const applyStylesToSegments = (
@@ -138,7 +152,6 @@ const DemoRichTextInputStyler: React.FC = () => {
     end: number, 
     newStyles: typeof textStyles
   ): TextSegment[] => {
-    const fullText = segmentsToText(segments);
     let currentPos = 0;
     const newSegments: TextSegment[] = [];
     
@@ -254,8 +267,7 @@ const DemoRichTextInputStyler: React.FC = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
-        setShowPopover(false);
-        setCurrentSelection(null);
+        hidePopover();
       }
     };
 
@@ -330,7 +342,11 @@ const DemoRichTextInputStyler: React.FC = () => {
       {showPopover && currentSelection && (
         <div
           ref={popoverRef}
-          className="fixed bg-white border border-gray-200 rounded-lg shadow-xl p-4 z-50 min-w-80"
+          className={`fixed bg-white border border-gray-200 rounded-lg shadow-xl p-4 z-50 min-w-80 transition-all duration-200 ease-in-out ${
+            isPopoverVisible 
+              ? 'opacity-100 scale-100 translate-y-0' 
+              : 'opacity-0 scale-95 translate-y-2'
+          }`}
           style={{
             left: popoverPosition.x - 160,
             top: popoverPosition.y - 120,
@@ -339,7 +355,7 @@ const DemoRichTextInputStyler: React.FC = () => {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-medium text-gray-800">Style Selected Text</h3>
             <button
-              onClick={() => setShowPopover(false)}
+              onClick={hidePopover}
               className="text-gray-400 hover:text-gray-600"
             >
               <X size={16} />
