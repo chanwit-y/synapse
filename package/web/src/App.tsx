@@ -1,5 +1,6 @@
 import BlockEditor from "./components/Editor/BlockEditor"
 import { DemoDnd } from "./components/Editor/demo-dnd"
+import DemoRichTextInputStyler from "./components/Editor/DemoInputTextHighlightStyler"
 
 function App() {
 
@@ -10,6 +11,7 @@ function App() {
       </h1>
       <h1>Hi</h1>
       <hr />
+      <DemoRichTextInputStyler />
       {/* <DemoDnd /> */}
       <BlockEditor id="1" />
     </>
