@@ -1,5 +1,19 @@
+import { useSortable } from "@dnd-kit/sortable";
+// import { MoveIcon } from "lucide-react";
 import { forwardRef, useCallback, useRef, useState } from "react";
+import { CSS } from '@dnd-kit/utilities';
 
+const MoveIcon = () => (
+	<svg
+		width="20"
+		height="20"
+		viewBox="0 0 24 24"
+		fill="currentColor"
+		style={{ cursor: 'grab' }}
+	>
+		<path d="M9 3h2v2H9V3zm4 0h2v2h-2V3zM9 7h2v2H9V7zm4 0h2v2h-2V7zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2z" />
+	</svg>
+);
 interface TextSegment {
 	text: string;
 	styles: {
@@ -20,9 +34,14 @@ interface Selection {
 
 
 type BlockInputProps = {
+	id: string
+	onAddNewItem: (currentId: string) => void;
 }
 
-const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ }) => {
+const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewItem }) => {
+
+	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
+
 	const inputRef = useRef<HTMLDivElement>(null);
 	const popoverRef = useRef<HTMLDivElement>(null);
 
@@ -63,8 +82,10 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ }) => {
 			const rect = inputRef.current?.getBoundingClientRect();
 			if (rect) {
 				console.log(e)
-				const x = e.screenX + 100;
-				const y = e.screenY - 110;
+				const x = e.screenX ;
+				const y = e.screenY ;
+				// const x = e.screenX + 100;
+				// const y = e.screenY - 110;
 
 				// Calculate text position within the segments
 				// const fullText = segmentsToText(inputSegments);
@@ -81,13 +102,62 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ }) => {
 		}
 	}, [inputRef])
 
-	return <>
+
+	const style = {
+		transform: CSS.Transform.toString(transform),
+		transition,
+		// backgroundColor: color,
+		opacity: isDragging ? 0.5 : 1,
+		borderRadius: '4px',
+		userSelect: 'none' as const,
+		// fontWeight: 'bold',
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		border: '2px solid rgba(255,255,255,0.2)',
+	};
+
+	const handleStyle = {
+		display: 'flex',
+		alignItems: 'center',
+		borderRadius: '4px',
+		// backgroundColor: 'rgba(255,255,255,0.2)',
+		transition: 'background-color 0.2s',
+	};
+
+
+	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			e.preventDefault()
+			onAddNewItem(id)
+		}
+	}, [id, onAddNewItem])
+
+	return <div className={`gap-1 px-2 mx-2 
+		focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+		ref={setNodeRef}
+		style={style}
+		{...attributes}
+	>
+		<div
+			style={handleStyle}
+			{...listeners}
+			onMouseEnter={(e) => {
+				(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.3)';
+			}}
+			onMouseLeave={(e) => {
+				(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.2)';
+			}}
+		>
+			<MoveIcon />
+		</div>
 		<div
 			ref={inputRef}
-			className=" outline-none rounded-md bg-amber-700 p-2 w-ful"
+			className=" outline-none rounded-md p-0.5 w-full "
 			contentEditable
 			suppressContentEditableWarning
 			onMouseUp={handleTextSelection}
+			onKeyDown={handleKeyDown}
 		/>
 		{/* {showPopover && currentSelection && ( */}
 		{showPopover && (
@@ -107,7 +177,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ }) => {
 				toolbar
 			</div>
 		)}
-	</>
+	</div>
 })
 
 BlockInput.displayName = "BlockInput";

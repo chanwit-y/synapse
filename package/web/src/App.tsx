@@ -13,9 +13,9 @@ function App() {
       </h1>
       <h1>Hi</h1>
       <hr />
-      <div className="m-4">
+      {/* <div className="m-4">
         <BlockInput />
-      </div>
+      </div> */}
       <hr />
       {/* <DemoRichTextInputStyler /> */}
       {/* <DemoDnd /> */}
