@@ -7,7 +7,7 @@ type BlockItemProps = {
 	id: string;
 	color?: string;
 	isEditing: boolean;
-	command: "p" | "h1" | "h2"
+	command: "p" | "h1" | "h2" | "h3"
 	onEditMode: (id: string) => void;
 	onAddNewItem: (currentId: string) => void;
 }
@@ -54,7 +54,9 @@ const BlockItem = forwardRef<ElementRef<"div">, BlockItemProps>(
 				case "h1":
 					return <h1 className="text-3xl font-bold underline">{value}</h1>
 				case "h2":
-					return <h2>{value}</h2>
+					return <h2 className="text-2xl font-bold">{value}</h2>
+				case "h3":
+					return <h3 className="text-xl font-bold">{value}</h3>
 				default: return null
 			}
 		}, [command, value])

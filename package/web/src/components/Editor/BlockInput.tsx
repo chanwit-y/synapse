@@ -100,7 +100,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ }) => {
 
 				style={{
 					left: popoverPosition.x - 180,
-					top: popoverPosition.y - 50,
+					top: popoverPosition.y - 60,
 				}}
 			>
 				<div className=" w-4 h-4 bg-white  absolute rotate-45 bottom-[-6px] left-6" />
