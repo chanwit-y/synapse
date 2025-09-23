@@ -1,6 +1,6 @@
 import { useSortable } from "@dnd-kit/sortable";
 // import { MoveIcon } from "lucide-react";
-import { forwardRef, useCallback, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { CSS } from '@dnd-kit/utilities';
 
 const MoveIcon = () => (
@@ -14,31 +14,13 @@ const MoveIcon = () => (
 		<path d="M9 3h2v2H9V3zm4 0h2v2h-2V3zM9 7h2v2H9V7zm4 0h2v2h-2V7zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2zm-4 4h2v2H9v-2zm4 0h2v2h-2v-2z" />
 	</svg>
 );
-interface TextSegment {
-	text: string;
-	styles: {
-		bold: boolean;
-		italic: boolean;
-		underline: boolean;
-		color: string;
-		backgroundColor: string;
-		fontSize: string;
-	};
-}
-
-interface Selection {
-	start: number;
-	end: number;
-	text: string;
-}
-
-
 type BlockInputProps = {
 	id: string
 	onAddNewItem: (currentId: string) => void;
+	shouldFocus?: boolean;
 }
 
-const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewItem }) => {
+const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewItem, shouldFocus = false }) => {
 
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id })
 
@@ -47,15 +29,17 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 
 	// Popover state
 	const [showPopover, setShowPopover] = useState<boolean>(false);
-	const [currentSelection, setCurrentSelection] = useState<Selection | null>(null);
 	const [isPopoverVisible, setIsPopoverVisible] = useState<boolean>(false);
 	const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-
-	// Convert segments to plain text
-	const segmentsToText = (segments: TextSegment[]) => {
-		return segments.map(segment => segment.text).join('');
-	};
+	// Focus the contentEditable div when shouldFocus is true
+	useEffect(() => {
+		if (shouldFocus && inputRef.current) {
+			setTimeout(() => {
+				inputRef.current?.focus();
+			}, 0);
+		}
+	}, [shouldFocus]);
 
 	const showPopoverWithAnimation = () => {
 		setShowPopover(true);
@@ -68,7 +52,6 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		// Hide popover after fade out animation completes
 		setTimeout(() => {
 			setShowPopover(false);
-			setCurrentSelection(null);
 		}, 200);
 	};
 

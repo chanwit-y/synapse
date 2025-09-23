@@ -1,7 +1,6 @@
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { forwardRef, useState, type ElementRef } from "react";
-import BlockItem from "./BlockItem";
 import BlockInput from "./BlockInput";
 
 
@@ -20,7 +19,7 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 		{ id: '7', content: '7', color: '#54a0ff', command: 'p' },
 	]);
 
-	const [editingItemId, setEditingItemId] = useState<string | null>(null);
+	const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
 
 	const handleDragEnd = (event: DragEndEvent) => {
 		const { active, over } = event;
@@ -51,9 +50,13 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 		newItems.splice(currentIndex + 1, 0, newItem);
 		setItems(newItems);
 
-		// Set the new item to editing mode after the component renders
+		// Set the new item to be focused after the component renders
 		setTimeout(() => {
-			setEditingItemId(newItem.id);
+			setFocusedItemId(newItem.id);
+			// Clear focus state after a short delay to avoid re-focusing
+			setTimeout(() => {
+				setFocusedItemId(null);
+			}, 100);
 		}, 0);
 	};
 
@@ -70,6 +73,7 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 					key={item.id}
 					id={item.id}
 					onAddNewItem={handleAddNewItem}
+					shouldFocus={focusedItemId === item.id}
 				/>
 				// <BlockItem
 				// 	key={item.id}
