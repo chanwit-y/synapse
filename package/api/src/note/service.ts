@@ -1,4 +1,5 @@
 import { CustomGeminiEmbeddings } from "../../pkg/ai/embedding";
+import { extendNoteByGemini } from "../../pkg/ai/extend_note";
 import { aiMapping } from "../../pkg/ai/mapping";
 import { buildVectorData } from "../../pkg/ai/rag";
 import { askAI } from "../../pkg/ai/retreiver";
@@ -13,6 +14,19 @@ export const createNote = async (body: CUNote) => {
     if (!category.success) {
         return category
     }
+
+
+    if(body.extendNote) {
+        const extendedNote = await extendNoteByGemini(body.content)
+        if(!extendedNote) {
+            return {
+                success: false,
+                message: "Failed to extend note"
+            }
+        }
+        body.content = `${body.content}\n\n${extendedNote.content}`
+    }
+
     const [newNote] = await db.insert(noteTable).values({
         name: body.name,
         categoryId: body.categoryId,

@@ -5,6 +5,9 @@ export const CUNoteSchema = t.Object({
     categoryId: t.String(),
     content: t.String(),
     language: t.Union([t.Literal("TH"), t.Literal("EN")]),
+    extendNote: t.Optional(t.Boolean({
+        default: false
+    })),
 })
 
 export const askAISchema = t.Object({

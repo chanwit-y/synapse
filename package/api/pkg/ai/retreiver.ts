@@ -1,12 +1,12 @@
 import { DistanceStrategy, PGVectorStore } from "@langchain/community/vectorstores/pgvector";
 import { EmbeddingsInterface } from '@langchain/core/embeddings';
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
-import dotenv from 'dotenv';
-import path from 'path';
 import { PoolConfig } from "pg";
 import { VectorStoreRetriever } from "@langchain/core/vectorstores";
 import { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import { CustomGeminiEmbeddings } from "./embedding";
+
+import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config({
     path: path.resolve(__dirname, '../../.env'),
@@ -50,7 +50,3 @@ export const askAI = async ({ q, retreiver, llm }: askAIType) => {
     const executor = await llm.invoke(messages)
     return executor.content
 }
-
-// const retreiver = await createRetriever({embeddings: new CustomGeminiEmbeddings("gemini-embedding-001"), vectorTableName: "note_chunk", columns: { idColumnName: "id", vectorColumnName: "embedding", contentColumnName: "content", metadataColumnName: "metadata" }, topK: 5})
-// const result = await askAI({q: "how old is gordon ramsay", retreiver, llm: new ChatGoogleGenerativeAI({ model: "gemini-2.5-pro", apiKey: process.env.GOOGLE_API_KEY, temperature: 0 })})
-// console.log(result)
