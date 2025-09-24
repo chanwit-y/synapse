@@ -5,6 +5,7 @@ export const noteTable = pgTable("note", {
     id: uuid().defaultRandom().primaryKey(),
     name: varchar({ length: 255 }).notNull(),
     categoryId: uuid().references(() => categoryTable.id),
+    language: varchar({ length: 255 }).notNull(),
     content: text().notNull(), //full content
     createdBy: varchar({ length: 36 }).notNull(),
     updatedBy: varchar({ length: 36 }).notNull(),

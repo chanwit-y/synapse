@@ -8,6 +8,34 @@
       "when": 1758279348941,
       "tag": "0000_productive_supreme_intelligence",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758624591912,
+      "tag": "0001_heavy_killer_shrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1758624646320,
+      "tag": "0002_aspiring_the_hunter",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1758626125482,
+      "tag": "0003_crazy_lily_hollister",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1758626600392,
+      "tag": "0004_dusty_overlord",
+      "breakpoints": true
     }
   ]
 }

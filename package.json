@@ -14,6 +14,7 @@
     "serve": "bun run serve:ui & bun run serve:api"
   },
   "dependencies": {
+    "@google/genai": "^1.20.0",
     "@langchain/community": "^0.3.56",
     "@langchain/core": "^0.3.77",
     "@langchain/google-genai": "^0.2.18",
