@@ -2,6 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 // import { MoveIcon } from "lucide-react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { CSS } from '@dnd-kit/utilities';
+import { Bold, Italic, Underline } from "lucide-react";
 
 const MoveIcon = () => (
 	<svg
@@ -31,6 +32,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 	const [showPopover, setShowPopover] = useState<boolean>(false);
 	const [isPopoverVisible, setIsPopoverVisible] = useState<boolean>(false);
 	const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+	const [currentSelection, setCurrentSelection] = useState<Range | null>(null);
 
 	// Focus the contentEditable div when shouldFocus is true
 	useEffect(() => {
@@ -40,6 +42,37 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			}, 0);
 		}
 	}, [shouldFocus]);
+
+	// Close popover when clicking outside or selecting other areas
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (inputRef.current && !inputRef.current.contains(event.target as Node) &&
+				popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
+				hidePopover();
+			}
+		};
+
+		const handleSelectionChange = () => {
+			const selection = window.getSelection();
+			if (selection && selection.rangeCount > 0) {
+				const range = selection.getRangeAt(0);
+				// Check if the selection is outside our input element
+				if (inputRef.current && !inputRef.current.contains(range.commonAncestorContainer)) {
+					hidePopover();
+				}
+			}
+		};
+
+		if (showPopover) {
+			document.addEventListener('mousedown', handleClickOutside);
+			document.addEventListener('selectionchange', handleSelectionChange);
+		}
+
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+			document.removeEventListener('selectionchange', handleSelectionChange);
+		};
+	}, [showPopover]);
 
 	const showPopoverWithAnimation = () => {
 		setShowPopover(true);
@@ -55,33 +88,26 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		}, 200);
 	};
 
-	const handleTextSelection = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+	const handleTextSelection = useCallback((_e: React.MouseEvent<HTMLDivElement>) => {
 		const selection = window.getSelection();
 		if (!selection || selection.rangeCount === 0) return;
 		const selectedText = selection?.toString();
 
-
 		if (selectedText.trim()) {
 			const rect = inputRef.current?.getBoundingClientRect();
 			if (rect) {
-				console.log(e)
-				const x = e.screenX ;
-				const y = e.screenY ;
-				// const x = e.screenX + 100;
-				// const y = e.screenY - 110;
+				const range = selection.getRangeAt(0);
+				setCurrentSelection(range.cloneRange()); // Store the selection range
+				
+				const x = rect.left + 150;
+				const y = rect.top - 10;
 
-				// Calculate text position within the segments
-				// const fullText = segmentsToText(inputSegments);
-				// const start = fullText.indexOf(selectedText);
-				// const end = start + selectedText.length;
-
-				// setCurrentSelection({ start, end, text: selectedText });
-				// setActiveField(fieldType);
 				setPopoverPosition({ x, y });
 				showPopoverWithAnimation();
 			}
 		} else {
 			hidePopover();
+			setCurrentSelection(null);
 		}
 	}, [inputRef])
 
@@ -116,6 +142,76 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		}
 	}, [id, onAddNewItem])
 
+	const applyBoldFormatting = useCallback(() => {
+		if (!currentSelection || !inputRef.current) return;
+
+		// Restore the selection
+		const selection = window.getSelection();
+		if (!selection) return;
+
+		selection.removeAllRanges();
+		selection.addRange(currentSelection);
+
+		// Check if the selected text is already bold
+		const selectedText = currentSelection.toString();
+		if (!selectedText.trim()) return;
+
+		// Use document.execCommand to apply bold formatting
+		try {
+			document.execCommand('bold', false);
+			hidePopover();
+			setCurrentSelection(null);
+		} catch (error) {
+			console.error('Failed to apply bold formatting:', error);
+		}
+	}, [currentSelection])
+
+	const applyItalicFormatting = useCallback(() => {
+		if (!currentSelection || !inputRef.current) return;
+
+		// Restore the selection
+		const selection = window.getSelection();
+		if (!selection) return;
+
+		selection.removeAllRanges();
+		selection.addRange(currentSelection);
+
+		const selectedText = currentSelection.toString();
+		if (!selectedText.trim()) return;
+
+		// Use document.execCommand to apply italic formatting
+		try {
+			document.execCommand('italic', false);
+			hidePopover();
+			setCurrentSelection(null);
+		} catch (error) {
+			console.error('Failed to apply italic formatting:', error);
+		}
+	}, [currentSelection])
+
+	const applyUnderlineFormatting = useCallback(() => {
+		if (!currentSelection || !inputRef.current) return;
+
+		// Restore the selection
+		const selection = window.getSelection();
+		if (!selection) return;
+
+		selection.removeAllRanges();
+		selection.addRange(currentSelection);
+
+		const selectedText = currentSelection.toString();
+		if (!selectedText.trim()) return;
+
+		// Use document.execCommand to apply underline formatting
+		try {
+			document.execCommand('underline', false);
+			hidePopover();
+			setCurrentSelection(null);
+		} catch (error) {
+			console.error('Failed to apply underline formatting:', error);
+		}
+	}, [currentSelection])
+
 	return <div className={`gap-1 px-2 mx-2 
 		focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
 		ref={setNodeRef}
@@ -136,7 +232,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		</div>
 		<div
 			ref={inputRef}
-			className=" outline-none rounded-md p-0.5 w-full "
+			className=" outline-none rounded-md  w-full "
 			contentEditable
 			suppressContentEditableWarning
 			onMouseUp={handleTextSelection}
@@ -146,18 +242,37 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		{showPopover && (
 			<div
 				ref={popoverRef}
-				className={`fixed bg-white border border-gray-200 rounded-lg shadow-xl p-4 z-50 min-w-80 transition-all duration-200 ease-in-out ${isPopoverVisible
+				className={`fixed bg-white border border-gray-200 rounded-lg shadow-xl p-2 z-50  transition-all duration-200 ease-in-out ${isPopoverVisible
 					? 'opacity-100 scale-100 translate-y-0'
 					: 'opacity-0 scale-95 translate-y-2'
 					}`}
 
 				style={{
 					left: popoverPosition.x - 180,
-					top: popoverPosition.y - 60,
+					top: popoverPosition.y - 40,
 				}}
 			>
-				<div className=" w-4 h-4 bg-white  absolute rotate-45 bottom-[-6px] left-6" />
-				toolbar
+				{/* <div className=" w-4 h-4 bg-white  absolute rotate-45 bottom-[-6px] left-6" /> */}
+				<div className="flex items-center justify-start">
+					<div 
+						className="p-0.5 hover:bg-gray-100 rounded-md cursor-pointer"
+						onClick={applyBoldFormatting}
+					>
+						<Bold size={20} />
+					</div>
+					<div 
+						className="p-0.5 hover:bg-gray-100 rounded-md cursor-pointer"
+						onClick={applyItalicFormatting}
+					>
+						<Italic size={20} />
+					</div>
+					<div 
+						className="p-0.5 hover:bg-gray-100 rounded-md cursor-pointer"
+						onClick={applyUnderlineFormatting}
+					>
+						<Underline size={20} />
+					</div>
+				</div>
 			</div>
 		)}
 	</div>
