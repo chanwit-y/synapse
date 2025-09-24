@@ -44,40 +44,42 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 			color: '#f0f0f0', // Default color
 			command: 'p' as const // Default to paragraph
 		};
-		
+
 		// Insert new item after the current item
 		const newItems = [...items];
 		newItems.splice(currentIndex + 1, 0, newItem);
 		setItems(newItems);
-		
+
 		// Set the new item to editing mode after the component renders
 		setTimeout(() => {
 			setEditingItemId(newItem.id);
 		}, 0);
 	};
 
-	return (<DndContext
-		collisionDetection={closestCenter}
-		onDragEnd={handleDragEnd}
-	>
-		<SortableContext
-			items={items.map((item) => item.id)}
-			strategy={verticalListSortingStrategy}
+	return (
+		<DndContext
+			collisionDetection={closestCenter}
+			onDragEnd={handleDragEnd}
 		>
-			{items.map((item) => (
-				<BlockItem
-					key={item.id}
-					id={item.id}
-					color={item.color}
-					isEditing={editingItemId === item.id}
-					command={item.command as any}
-					onEditMode={(id) => {
-						setEditingItemId(id);
-					}}
-					onAddNewItem={handleAddNewItem} />
-			))}
-		</SortableContext>
-	</DndContext>)
+			<SortableContext
+				items={items.map((item) => item.id)}
+				strategy={verticalListSortingStrategy}
+			>
+				{items.map((item) => (
+					<BlockItem
+						key={item.id}
+						id={item.id}
+						color={item.color}
+						isEditing={editingItemId === item.id}
+						command={item.command as any}
+						onEditMode={(id) => {
+							setEditingItemId(id);
+						}}
+						onAddNewItem={handleAddNewItem} />
+				))}
+			</SortableContext>
+		</DndContext>
+	)
 })
 
 BlockEditor.displayName = "Block";

@@ -1,8 +1,7 @@
-import { Popover, PopoverContent, PopoverTrigger } from "./components"
+import { EllipsisVertical } from "lucide-react"
 import BlockEditor from "./components/Editor/BlockEditor"
 import BlockInput from "./components/Editor/BlockInput"
-import { DemoDnd } from "./components/Editor/demo-dnd"
-import DemoRichTextInputStyler from "./components/Editor/DemoInputTextHighlightStyler"
+import PanelPopover from "./components/PanelPopover"
 
 function App() {
 
@@ -22,17 +21,9 @@ function App() {
       <BlockEditor id="1" />
       <hr />
       <div className="p-2 flex items-center justify-center">
-        <Popover>
-          <PopoverTrigger>
-            Click me
-          </PopoverTrigger>
-          <PopoverContent>
-            <div>
-              <h3>Popover Title</h3>
-              <p>This is the popover content.</p>
-            </div>
-          </PopoverContent>
-        </Popover>
+        <PanelPopover>
+          <EllipsisVertical />
+        </PanelPopover>
       </div>
     </>
   )
