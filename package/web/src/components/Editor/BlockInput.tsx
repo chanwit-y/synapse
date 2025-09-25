@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 // import { MoveIcon } from "lucide-react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { CSS } from '@dnd-kit/utilities';
-import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered } from "lucide-react";
+import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered, Plus } from "lucide-react";
 
 const MoveIcon = () => (
 	<svg
@@ -33,13 +33,13 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 	const [isPopoverVisible, setIsPopoverVisible] = useState<boolean>(false);
 	const [popoverPosition, setPopoverPosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 	const [currentSelection, setCurrentSelection] = useState<Range | null>(null);
-	
+
 	// Color dropdown state
 	const [showColorDropdown, setShowColorDropdown] = useState<boolean>(false);
-	
+
 	// Font size dropdown state
 	const [showFontSizeDropdown, setShowFontSizeDropdown] = useState<boolean>(false);
-	
+
 	// Bullet list dropdown state
 	const [showBulletDropdown, setShowBulletDropdown] = useState<boolean>(false);
 
@@ -110,7 +110,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			if (rect) {
 				const range = selection.getRangeAt(0);
 				setCurrentSelection(range.cloneRange()); // Store the selection range
-				
+
 				const x = rect.left + 150;
 				const y = rect.top - 10;
 
@@ -122,6 +122,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			setCurrentSelection(null);
 		}
 	}, [inputRef])
+
 
 
 	const style = {
@@ -152,7 +153,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			if (e.shiftKey) {
 				// Shift+Enter: Insert a new line within the current block
 				e.preventDefault();
-				
+
 				// Insert a line break at the current cursor position
 				const selection = window.getSelection();
 				if (selection && selection.rangeCount > 0) {
@@ -160,7 +161,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 					const br = document.createElement('br');
 					range.deleteContents();
 					range.insertNode(br);
-					
+
 					// Move cursor after the line break
 					range.setStartAfter(br);
 					range.setEndAfter(br);
@@ -170,16 +171,16 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			} else {
 				// Regular Enter: Check if we're in a list and continue formatting
 				e.preventDefault();
-				
+
 				// Check if cursor is currently inside a list
 				const selection = window.getSelection();
 				let listType = null;
 				let listStyle = null;
-				
+
 				if (selection && selection.rangeCount > 0) {
 					const range = selection.getRangeAt(0);
 					let currentElement = range.startContainer;
-					
+
 					// Traverse up the DOM to find list elements
 					while (currentElement && currentElement !== inputRef.current) {
 						if (currentElement.nodeType === Node.ELEMENT_NODE) {
@@ -200,17 +201,17 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 						currentElement = currentElement.parentNode as Node;
 					}
 				}
-				
+
 				// Create new block and apply list formatting if needed
 				onAddNewItem(id);
-				
+
 				// If we were in a list, apply the same list formatting to the new block
 				if (listType) {
 					setTimeout(() => {
 						// Find the newly created block that comes after the current block
 						const currentBlockElement = inputRef.current?.closest('[data-rbd-draggable-id], .sortable-item') || inputRef.current?.parentElement;
 						let nextBlock = null;
-						
+
 						if (currentBlockElement) {
 							// Look for the next sibling that contains a block-input-editor
 							let nextSibling = currentBlockElement.nextElementSibling;
@@ -223,13 +224,13 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 								nextSibling = nextSibling.nextElementSibling;
 							}
 						}
-						
+
 						// Fallback: if we can't find the next block by traversal, find by focus state
 						if (!nextBlock) {
 							const allBlocks = document.querySelectorAll('.block-input-editor');
 							// The newly created block should be the one that just received focus
 							nextBlock = document.activeElement?.closest('.block-input-editor') as HTMLElement;
-							
+
 							// If that doesn't work, find the first empty block after the current one
 							if (!nextBlock) {
 								const currentBlockIndex = Array.from(allBlocks).indexOf(inputRef.current!);
@@ -238,10 +239,10 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 								}
 							}
 						}
-						
+
 						if (nextBlock) {
 							nextBlock.focus();
-							
+
 							// Select all content in the new block
 							const selection = window.getSelection();
 							if (selection) {
@@ -249,7 +250,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 								range.selectNodeContents(nextBlock);
 								selection.removeAllRanges();
 								selection.addRange(range);
-								
+
 								// Apply the same list formatting
 								if (listType === 'ul') {
 									document.execCommand('insertUnorderedList', false);
@@ -263,7 +264,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 								} else if (listType === 'ol') {
 									document.execCommand('insertOrderedList', false);
 								}
-								
+
 								// Position cursor at the end
 								range.collapse(false);
 								selection.removeAllRanges();
@@ -433,7 +434,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		try {
 			// Use document.execCommand to wrap the selection with a font size
 			document.execCommand('fontSize', false, '7'); // Use largest size first
-			
+
 			// Then find the font element and replace it with a span with custom size
 			const fontElements = inputRef.current.querySelectorAll('font[size="7"]');
 			fontElements.forEach(fontEl => {
@@ -468,7 +469,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 			// Use document.execCommand to create lists
 			if (listType === 'ul' || listType.startsWith('ul-')) {
 				document.execCommand('insertUnorderedList', false);
-				
+
 				// Apply custom list style if specified
 				if (listType === 'ul-circle' || listType === 'ul-square') {
 					const lists = inputRef.current.querySelectorAll('ul');
@@ -532,6 +533,9 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		style={style}
 		{...attributes}
 	>
+		{/* <button onClick={() => setShowPopover(true)} className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer">
+			<Type />
+		</button> */}
 		<div
 			style={handleStyle}
 			{...listeners}
@@ -569,62 +573,62 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 				{/* <div className=" w-4 h-4 bg-white  absolute rotate-45 bottom-[-6px] left-6" /> */}
 				<div className="flex items-center justify-start gap-1">
 					{/* Text formatting buttons */}
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={applyBoldFormatting}
 						title="Bold"
 					>
 						<Bold size={16} />
 					</div>
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={applyItalicFormatting}
 						title="Italic"
 					>
 						<Italic size={16} />
 					</div>
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={applyUnderlineFormatting}
 						title="Underline"
 					>
 						<Underline size={16} />
 					</div>
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={applyHighlightFormatting}
 						title="Highlight"
 					>
 						<Highlighter size={16} />
 					</div>
-					
+
 					{/* Heading buttons */}
 					<div className="w-px h-4 bg-gray-300 mx-1" /> {/* Separator */}
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={() => applyHeadingFormatting('h1')}
 						title="Heading 1"
 					>
 						<Heading1 size={16} />
 					</div>
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={() => applyHeadingFormatting('h2')}
 						title="Heading 2"
 					>
 						<Heading2 size={16} />
 					</div>
-					<div 
+					<div
 						className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer"
 						onClick={() => applyHeadingFormatting('h3')}
 						title="Heading 3"
 					>
 						<Heading3 size={16} />
 					</div>
-					
+
 					{/* Color dropdown */}
 					<div className="relative">
-						<div 
+						<div
 							className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer flex items-center gap-1"
 							onClick={() => setShowColorDropdown(!showColorDropdown)}
 							title="Text Color"
@@ -632,7 +636,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 							<Palette size={16} />
 							<ChevronDown size={12} className={`transition-transform ${showColorDropdown ? 'rotate-180' : ''}`} />
 						</div>
-						
+
 						{/* Color palette dropdown */}
 						{showColorDropdown && (
 							<div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-10 w-[140px] h-[100px]">
@@ -650,10 +654,10 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 							</div>
 						)}
 					</div>
-					
+
 					{/* Font size dropdown */}
 					<div className="relative">
-						<div 
+						<div
 							className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer flex items-center gap-1"
 							onClick={() => setShowFontSizeDropdown(!showFontSizeDropdown)}
 							title="Font Size"
@@ -661,7 +665,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 							<Type size={16} />
 							<ChevronDown size={12} className={`transition-transform ${showFontSizeDropdown ? 'rotate-180' : ''}`} />
 						</div>
-						
+
 						{/* Font size options dropdown */}
 						{showFontSizeDropdown && (
 							<div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10 w-[80px] max-h-[160px] overflow-y-auto">
@@ -680,10 +684,10 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 							</div>
 						)}
 					</div>
-					
+
 					{/* Bullet list dropdown */}
 					<div className="relative">
-						<div 
+						<div
 							className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer flex items-center gap-1"
 							onClick={() => setShowBulletDropdown(!showBulletDropdown)}
 							title="List Format"
@@ -691,7 +695,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 							<List size={16} />
 							<ChevronDown size={12} className={`transition-transform ${showBulletDropdown ? 'rotate-180' : ''}`} />
 						</div>
-						
+
 						{/* Bullet list options dropdown */}
 						{showBulletDropdown && (
 							<div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2 z-10 w-[160px]">
@@ -708,7 +712,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 												<div className="flex items-center gap-2">
 													<IconComponent size={16} className="text-gray-600" />
 													{/* <span className="text-lg font-bold text-gray-800 w-4 text-center">{option.symbol}</span> */}
-												<span className="text-sm text-gray-700">{option.label}</span>
+													<span className="text-sm text-gray-700">{option.label}</span>
 												</div>
 											</div>
 										);
