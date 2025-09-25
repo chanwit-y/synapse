@@ -44,10 +44,12 @@ export const extendNoteAI = {
 }
 
 export const defaultOpenAITemperature = {
-    "gpt-5-mini": 1
+    "gpt-5-mini": 1,
+    "gpt-5": 1,
+    "gpt-4.1": 0,
 }
 
 export const allowanceAIChatModel = {
-    gemini: ["gemini-2.5-pro"],
-    openai: ["gpt-5-mini"],
+    gemini: [process.env.GEMINI_2_5_PRO_MODEL],
+    openai: [process.env.OPEN_AI_GPT_5_MINI_MODEL, process.env.OPEN_AI_GPT_5_MODEL, process.env.OPEN_AI_GPT_4_1_MODEL],
 }

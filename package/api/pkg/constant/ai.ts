@@ -1,0 +1,1 @@
+export const NO_ANSWER_MESSAGE = "Sorry We don't have the answer for that question"

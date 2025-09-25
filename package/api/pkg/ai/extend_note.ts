@@ -32,7 +32,7 @@ export const extendNoteByGemini = async (note: string): Promise<ExtendedNote | n
     try {
         // Initialize the Gemini model with structured output
         const model = new ChatGoogleGenerativeAI({
-            model: "gemini-2.5-pro",
+            model: process.env.GEMINI_2_5_PRO_MODEL!,
             temperature: 0,
             maxRetries: 3,
             apiKey: process.env.GOOGLE_API_KEY,
@@ -94,8 +94,6 @@ export const extendNoteByGemini = async (note: string): Promise<ExtendedNote | n
             await prompt.format({ note: note.trim() })
         ]);
 
-        console.log(response);
-        
 
         // Validate and return the parsed response
         if (!response.parsed) {
@@ -144,18 +142,19 @@ export const extendNoteByOpenAI = async (note: string): Promise<ExtendedNote | n
         }
 
         const model = new ChatOpenAI({
-            model: "gpt-5-mini",
+            model: process.env.OPEN_AI_GPT_5_MODEL!,
             temperature: 1,
+            maxRetries: 3,
             apiKey: process.env.OPENAI_API_KEY,
         }).withStructuredOutput(extendedNoteSchema, {
             includeRaw: true,
             method: "json_mode"
         });
 
-        const prompt = ChatPromptTemplate.fromTemplate(`
+        const prompt = `
         You are an expert fact researcher and knowledge expander. Your task is to analyze the given base note and extend it with comprehensive, factual, and relevant information.
 
-        **Base Note:** {note}
+        **Base Note:** ${note}
 
         **Instructions:**
         1. **Identify Key Entities and Topics**: Extract all important people, organizations, concepts, events, or subjects mentioned in the base note.
@@ -197,15 +196,9 @@ export const extendNoteByOpenAI = async (note: string): Promise<ExtendedNote | n
             - ** important format for content is only text no markdown or html or any other format **
 
         Please extend the following note with factual information:
-        `);
+        `
 
-        const response = await model.invoke([
-            await prompt.format({ note: note.trim() })
-        ]);
-
-        console.log(response);
-        
-
+        const response = await model.invoke(prompt);
         if (!response.parsed) {
             console.error('Failed to parse response from OpenAI API:', response.raw);
             return null;
