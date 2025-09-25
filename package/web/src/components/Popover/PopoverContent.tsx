@@ -11,6 +11,12 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
   sideOffset = 8,
   align = 'center',
   avoidCollisions = true,
+  width,
+  height,
+  minWidth,
+  minHeight,
+  maxWidth,
+  maxHeight,
 }) => {
   const { isOpen, position, contentRef, updatePosition } = usePopoverContext();
 
@@ -36,6 +42,12 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
       style={{
         left: position.x,
         top: position.y,
+        width,
+        height,
+        minWidth,
+        minHeight,
+        maxWidth,
+        maxHeight,
         ...style,
       }}
       data-state={isOpen ? 'open' : 'closed'}
@@ -52,6 +64,12 @@ export const PopoverContentInline: React.FC<PopoverContentProps> = ({
   children,
   className,
   style,
+  width,
+  height,
+  minWidth,
+  minHeight,
+  maxWidth,
+  maxHeight,
 }) => {
   const { isOpen, position, contentRef } = usePopoverContext();
 
@@ -68,6 +86,12 @@ export const PopoverContentInline: React.FC<PopoverContentProps> = ({
       style={{
         left: position.x,
         top: position.y,
+        width,
+        height,
+        minWidth,
+        minHeight,
+        maxWidth,
+        maxHeight,
         ...style,
       }}
       data-state={isOpen ? 'open' : 'closed'}
