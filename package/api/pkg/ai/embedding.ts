@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { EmbeddingsInterface } from '@langchain/core/embeddings';
+import { OpenAIEmbeddings } from "@langchain/openai";
 
 export class CustomGeminiEmbeddings implements EmbeddingsInterface {
     private client: GoogleGenAI;
@@ -30,5 +31,27 @@ export class CustomGeminiEmbeddings implements EmbeddingsInterface {
             config: { outputDimensionality: this.outputDim },
         });
         return response.embeddings!.map((e: any) => e.values)! as number[][];
+    }
+}
+
+export class CustomOpenAIEmbeddings implements EmbeddingsInterface {
+    private client: OpenAIEmbeddings;
+
+    constructor(model: string, outputDim: number = 1536) {
+        this.client = new OpenAIEmbeddings({
+            model: model,
+            dimensions: outputDim,
+        })
+    }
+
+    async embedQuery(text: string): Promise<number[]> {
+        const response = await this.client.embedQuery(text);
+        return response
+
+    }
+
+    async embedDocuments(texts: string[]): Promise<number[][]> {
+        const response = await this.client.embedDocuments(texts);
+        return response
     }
 }

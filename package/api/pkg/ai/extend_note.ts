@@ -1,6 +1,7 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import z from "zod";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
+import { ChatOpenAI } from "@langchain/openai";
 
 import dotenv from 'dotenv';
 import path from 'path';
@@ -93,6 +94,9 @@ export const extendNoteByGemini = async (note: string): Promise<ExtendedNote | n
             await prompt.format({ note: note.trim() })
         ]);
 
+        console.log(response);
+        
+
         // Validate and return the parsed response
         if (!response.parsed) {
             console.error('Failed to parse response from Gemini API:', response.raw);
@@ -110,7 +114,7 @@ export const extendNoteByGemini = async (note: string): Promise<ExtendedNote | n
 
     } catch (error) {
         console.error('Error extending note with Gemini:', error);
-        
+
         // Handle specific error types
         if (error instanceof Error) {
             if (error.message.includes('API key')) {
@@ -123,15 +127,100 @@ export const extendNoteByGemini = async (note: string): Promise<ExtendedNote | n
                 throw new Error('Rate limit exceeded. Please try again later.');
             }
         }
-        
+
         // For other errors, return null to allow graceful handling
         return null;
     }
 }
 
-// console.log(await extendNoteByGemini("Elon Musk เป็นเจ้าของ Tesla"));
-// console.log("");
-// console.log("");
-// console.log("");
+export const extendNoteByOpenAI = async (note: string): Promise<ExtendedNote | null> => {
+    try {
+        if (!note || typeof note !== 'string' || note.trim().length === 0) {
+            throw new Error('Note parameter must be a non-empty string');
+        }
 
-// console.log(await extendNoteByGemini("เชฟป้อม หม่อมหลวงขวัญทิพย์ เทวกุล ถนัดทำอาหารไทยโบราณ"));
+        if (!process.env.OPENAI_API_KEY) {
+            throw new Error('OPENAI_API_KEY environment variable is required');
+        }
+
+        const model = new ChatOpenAI({
+            model: "gpt-5-mini",
+            temperature: 1,
+            apiKey: process.env.OPENAI_API_KEY,
+        }).withStructuredOutput(extendedNoteSchema, {
+            includeRaw: true,
+            method: "json_mode"
+        });
+
+        const prompt = ChatPromptTemplate.fromTemplate(`
+        You are an expert fact researcher and knowledge expander. Your task is to analyze the given base note and extend it with comprehensive, factual, and relevant information.
+
+        **Base Note:** {note}
+
+        **Instructions:**
+        1. **Identify Key Entities and Topics**: Extract all important people, organizations, concepts, events, or subjects mentioned in the base note.
+
+        2. **Fact Verification and Expansion**: For each identified entity:
+           - Verify the accuracy of statements in the base note
+           - Add missing factual information that provides broader context
+           - Include current and historical facts
+           - Mention related entities, connections, and relationships
+
+        3. **Provide Comprehensive Context**: 
+           - Add background information that enhances understanding
+           - Include relevant dates, numbers, achievements, controversies
+           - Mention related industries, fields, or domains
+           - Add interconnections between different entities mentioned
+
+        4. **Maintain Factual Accuracy**:
+           - Only include information you are confident is accurate
+           - Avoid speculation or opinions
+           - Focus on verifiable facts
+           - Include recent developments when relevant
+
+        5. **Structure and Organization**:
+           - Keep the original note content intact in "sourceNote"
+           - In "content", provide the extended information in a well-organized manner
+           - Use clear sections or bullet points for different aspects
+           - Ensure the extended content flows logically
+
+        **Example**: If the base note says "Elon Musk is the owner of Tesla", you should extend it with information about:
+        - His other major companies (X/Twitter, SpaceX, Neuralink, The Boring Company)
+        - His role and titles in these companies
+        - Key achievements and milestones
+        - Timeline of his involvement with these companies
+        - Related industry context
+
+        **Output Format**:
+        - sourceNote: The original note exactly as provided
+        - content: The comprehensive extended information with additional facts and context
+            - ** important format for content is only text no markdown or html or any other format **
+
+        Please extend the following note with factual information:
+        `);
+
+        const response = await model.invoke([
+            await prompt.format({ note: note.trim() })
+        ]);
+
+        console.log(response);
+        
+
+        if (!response.parsed) {
+            console.error('Failed to parse response from OpenAI API:', response.raw);
+            return null;
+        }
+
+        const result = response.parsed as ExtendedNote;
+        if (!result.sourceNote || !result.content) {
+            console.error('Invalid response structure from OpenAI API:', result);
+            return null;
+        }
+
+        return result;
+
+    } catch (error) {
+        console.error('Error extending note with OpenAI:', error);
+        return null;
+    }
+}

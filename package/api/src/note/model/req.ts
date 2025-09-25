@@ -8,6 +8,7 @@ export const CUNoteSchema = t.Object({
     extendNote: t.Optional(t.Boolean({
         default: false
     })),
+    embeddings: t.Optional(t.Union([t.Literal("gemini"), t.Literal("openai")]))
 })
 
 export const askAISchema = t.Object({

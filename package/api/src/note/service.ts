@@ -1,6 +1,4 @@
-import { CustomGeminiEmbeddings } from "../../pkg/ai/embedding";
-import { extendNoteByGemini } from "../../pkg/ai/extend_note";
-import { aiMapping } from "../../pkg/ai/mapping";
+import { aiMapping, allowanceAIChatModel, embeddingsAI, extendNoteAI } from "../../pkg/ai/mapping";
 import { buildVectorData } from "../../pkg/ai/rag";
 import { askAI } from "../../pkg/ai/retreiver";
 import db from "../../pkg/db/conn";
@@ -17,7 +15,7 @@ export const createNote = async (body: CUNote) => {
 
 
     if(body.extendNote) {
-        const extendedNote = await extendNoteByGemini(body.content)
+        const extendedNote = await extendNoteAI[body.embeddings as keyof typeof extendNoteAI](body.content)
         if(!extendedNote) {
             return {
                 success: false,
@@ -36,7 +34,7 @@ export const createNote = async (body: CUNote) => {
         updatedBy: "SYSTEM",
     }).returning()
 
-    const embeddings = new CustomGeminiEmbeddings(process.env.GEMINI_EMBEDING_001_MODEL!)
+    const embeddings = embeddingsAI[body.embeddings as keyof typeof embeddingsAI]
     const {vectors, chunks} = await buildVectorData(body.content, embeddings)
 
     const datas: typeof noteChunkTable.$inferInsert[] = []
@@ -65,6 +63,13 @@ export const createNote = async (body: CUNote) => {
 }
 
 export const ask = async (body: TaskAI) => {
+    if(!allowanceAIChatModel[body.aiProvider as keyof typeof allowanceAIChatModel].includes(body.model)) {
+        return {
+            success: false,
+            message: "Model not allowed"
+        }
+    }
+
     const {retreiver, llm} = await aiMapping[body.aiProvider as keyof typeof aiMapping](body.model, body.topic, 5)
 
     const result = await askAI({q: body.question, retreiver, llm})

@@ -1,6 +1,8 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { CustomGeminiEmbeddings } from "./embedding";
+import { CustomGeminiEmbeddings, CustomOpenAIEmbeddings } from "./embedding";
 import { createRetriever } from "./retreiver";
+import { ChatOpenAI } from "@langchain/openai";
+import { extendNoteByGemini, extendNoteByOpenAI } from "./extend_note";
 
 const topicMapping = {
     note: {
@@ -15,8 +17,37 @@ export const aiMapping = {
         const table = topicMapping[topic as keyof typeof topicMapping]
 
         return {
-            retreiver: await createRetriever({ embeddings: new CustomGeminiEmbeddings(process.env.GEMINI_EMBEDING_001_MODEL!), vectorTableName: table.vectorTableName, columns: table.columns, topK: topK }),
-            llm: new ChatGoogleGenerativeAI({ model: model, apiKey: process.env.GOOGLE_API_KEY!, temperature: 0 })
+            retreiver: await createRetriever({ embeddings: new CustomGeminiEmbeddings(process.env.GEMINI_EMBEDDING_001_MODEL!), vectorTableName: table.vectorTableName, columns: table.columns, topK: topK }),
+            llm: new ChatGoogleGenerativeAI({ model: model, apiKey: process.env.GOOGLE_API_KEY!, temperature: 0 }),
+            embeddings: new CustomGeminiEmbeddings(process.env.GEMINI_EMBEDDING_001_MODEL!),
+        }
+    },
+    openai: async (model: string, topic: keyof typeof topicMapping, topK: number = 5) => {
+        const table = topicMapping[topic as keyof typeof topicMapping]
+
+        return {
+            retreiver: await createRetriever({ embeddings: new CustomOpenAIEmbeddings(process.env.OPEN_AI_EMBEDDING_TEXT_EMBEDDING_3_L!), vectorTableName: table.vectorTableName, columns: table.columns, topK: topK }),
+            llm: new ChatOpenAI({ model: model, apiKey: process.env.OPENAI_API_KEY!, temperature: defaultOpenAITemperature[model as keyof typeof defaultOpenAITemperature] }),
+            embeddings: new CustomOpenAIEmbeddings(process.env.OPEN_AI_EMBEDDING_TEXT_EMBEDDING_3_L!),
         }
     }
+}
+
+export const embeddingsAI = {
+    gemini: new CustomGeminiEmbeddings(process.env.GEMINI_EMBEDDING_001_MODEL!),
+    openai: new CustomOpenAIEmbeddings(process.env.OPEN_AI_EMBEDDING_TEXT_EMBEDDING_3_L!),
+}
+
+export const extendNoteAI = {
+    gemini: extendNoteByGemini,
+    openai: extendNoteByOpenAI,
+}
+
+export const defaultOpenAITemperature = {
+    "gpt-5-mini": 1
+}
+
+export const allowanceAIChatModel = {
+    gemini: ["gemini-2.5-pro"],
+    openai: ["gpt-5-mini"],
 }
