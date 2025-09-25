@@ -2,7 +2,7 @@ import { useSortable } from "@dnd-kit/sortable";
 // import { MoveIcon } from "lucide-react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { CSS } from '@dnd-kit/utilities';
-import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered, Plus } from "lucide-react";
+import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered } from "lucide-react";
 
 const MoveIcon = () => (
 	<svg
@@ -42,6 +42,9 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 
 	// Bullet list dropdown state
 	const [showBulletDropdown, setShowBulletDropdown] = useState<boolean>(false);
+
+	// Hover state for MoveIcon visibility
+	const [isHovered, setIsHovered] = useState<boolean>(false);
 
 	// Focus the contentEditable div when shouldFocus is true
 	useEffect(() => {
@@ -532,22 +535,26 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		ref={setNodeRef}
 		style={style}
 		{...attributes}
+		onMouseEnter={() => setIsHovered(true)}
+		onMouseLeave={() => setIsHovered(false)}
 	>
 		{/* <button onClick={() => setShowPopover(true)} className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer">
 			<Type />
 		</button> */}
-		<div
-			style={handleStyle}
-			{...listeners}
-			onMouseEnter={(e) => {
-				(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.3)';
-			}}
-			onMouseLeave={(e) => {
-				(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.2)';
-			}}
-		>
-			<MoveIcon />
-		</div>
+		{isHovered ? (
+			<div
+				style={handleStyle}
+				{...listeners}
+				onMouseEnter={(e) => {
+					(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.3)';
+				}}
+				onMouseLeave={(e) => {
+					(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.2)';
+				}}
+			>
+				<MoveIcon />
+			</div>
+		) : <div className="h-4 w-5" />}
 		<div
 			ref={inputRef}
 			className=" outline-none rounded-md  w-full block-input-editor"
