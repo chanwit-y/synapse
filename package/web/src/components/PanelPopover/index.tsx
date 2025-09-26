@@ -226,20 +226,20 @@ const PanelPopover = ({
     }
   };
 
-  const handleMenuItemMouseLeave = () => {
-    // Close submenu when leaving any menu item
-    // Small delay to allow moving to submenu if it exists
-    setTimeout(() => {
-      setActiveSubmenu(null);
-    }, 100);
-  };
+  // const handleMenuItemMouseLeave = () => {
+  //   // Close submenu when leaving any menu item
+  //   // Small delay to allow moving to submenu if it exists
+  //   setTimeout(() => {
+  //     setActiveSubmenu(null);
+  //   }, 100);
+  // };
 
-  const handlePopoverMouseLeave = () => {
-    // Close submenu when leaving the main popover, but only if not hovering over submenu
-    setTimeout(() => {
-      setActiveSubmenu(null);
-    }, 150); // Small delay to allow moving to submenu
-  };
+  // const handlePopoverMouseLeave = () => {
+  //   // Close submenu when leaving the main popover, but only if not hovering over submenu
+  //   setTimeout(() => {
+  //     setActiveSubmenu(null);
+  //   }, 150); // Small delay to allow moving to submenu
+  // };
 
   const handleSubmenuMouseEnter = () => {
     // Keep submenu open when entering it
@@ -271,6 +271,7 @@ const PanelPopover = ({
         // onMouseLeave={handlePopoverMouseLeave}
         >
           <div>
+            {/* Search input */}
             {/* Search input */}
             <Input />
 
