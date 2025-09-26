@@ -64,6 +64,7 @@ const BlockItem = forwardRef<ElementRef<"div">, BlockItemProps>(
 		const handleClickEditor = useCallback(() => {
 			onEditMode(id)
 			// Use setTimeout to ensure the input is rendered before focusing
+			// Use setTimeout to ensure the input is rendered before focusing
 			setTimeout(() => {
 				inputRef.current?.focus()
 			}, 0)
