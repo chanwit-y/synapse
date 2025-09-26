@@ -2,7 +2,8 @@ import { useSortable } from "@dnd-kit/sortable";
 // import { MoveIcon } from "lucide-react";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { CSS } from '@dnd-kit/utilities';
-import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered } from "lucide-react";
+import { Bold, Italic, Underline, ChevronDown, Palette, Heading1, Heading2, Heading3, Highlighter, Type, List, ListOrdered, TypeIcon } from "lucide-react";
+import PanelPopover from "../PanelPopover";
 
 const MoveIcon = () => (
 	<svg
@@ -530,7 +531,7 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		{ label: 'Square List', value: 'ul-square', icon: List, symbol: '▪' },
 	];
 
-	return <div className={`gap-1 px-2 mx-2 
+	return <div className={`flex gap-1 px-2 mx-2 
 		focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
 		ref={setNodeRef}
 		style={style}
@@ -538,31 +539,40 @@ const BlockInput = forwardRef<HTMLDivElement, BlockInputProps>(({ id, onAddNewIt
 		onMouseEnter={() => setIsHovered(true)}
 		onMouseLeave={() => setIsHovered(false)}
 	>
+
 		{/* <button onClick={() => setShowPopover(true)} className="p-1.5 hover:bg-gray-100 rounded-md cursor-pointer">
 			<Type />
 		</button> */}
-		{isHovered ? (
-			<div
-				style={handleStyle}
-				{...listeners}
-				onMouseEnter={(e) => {
-					(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.3)';
-				}}
-				onMouseLeave={(e) => {
-					(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.2)';
-				}}
-			>
-				<MoveIcon />
+			<div className={`flex gap-1 items-center w-10 transition-opacity duration-200 ease-in-out`} style={{opacity: isHovered ? 1 : 0}}>
+				<div
+					style={handleStyle}
+					{...listeners}
+					onMouseEnter={(e) => {
+						(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.3)';
+					}}
+					onMouseLeave={(e) => {
+						(e.target as HTMLElement).style.backgroundColor = 'rgba(255,255,255,0.2)';
+					}}
+				>
+					<MoveIcon />
+				</div>
+
+				<div className="p-1 hover:bg-gray-100 rounded-md cursor-pointer">
+					<PanelPopover>
+						<TypeIcon size={14} />
+					</PanelPopover>
+				</div>
 			</div>
-		) : <div className="h-4 w-5" />}
+
 		<div
 			ref={inputRef}
-			className=" outline-none rounded-md  w-full block-input-editor"
+			className="mx-2 outline-none rounded-md  w-full block-input-editor"
 			contentEditable
 			suppressContentEditableWarning
 			onMouseUp={handleTextSelection}
 			onKeyDown={handleKeyDown}
 		/>
+
 		{/* {showPopover && currentSelection && ( */}
 		{showPopover && (
 			<div

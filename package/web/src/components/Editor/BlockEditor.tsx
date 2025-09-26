@@ -2,6 +2,7 @@ import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { forwardRef, useState, type ElementRef } from "react";
 import BlockItem from "./BlockItem";
+import BlockInput from "./BlockInput";
 
 
 type BlockProps = {
@@ -70,16 +71,12 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 				strategy={verticalListSortingStrategy}
 			>
 				{items.map((item) => (
-					<BlockItem
-						key={item.id}
-						id={item.id}
-						color={item.color}
-						isEditing={editingItemId === item.id}
-						command={item.command as any}
-						onEditMode={(id) => {
-							setEditingItemId(id);
-						}}
-						onAddNewItem={handleAddNewItem} />
+					<BlockInput
+					key={item.id}
+					id={item.id}
+					onAddNewItem={handleAddNewItem}
+					shouldFocus={focusedItemId === item.id}
+				/>
 				))}
 			</SortableContext>
 		</DndContext>

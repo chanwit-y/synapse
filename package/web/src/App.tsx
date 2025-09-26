@@ -7,12 +7,6 @@ function App() {
   return (
     <div className="mt-10 p-4">
       <BlockEditor id="1" />
-      <hr />
-      <div className="p-2 flex items-center justify-center">
-        <PanelPopover>
-          <EllipsisVertical />
-        </PanelPopover>
-      </div>
     </div>
   )
 }
