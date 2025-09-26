@@ -6,18 +6,7 @@ import PanelPopover from "./components/PanelPopover"
 function App() {
 
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-      <h1>Hi</h1>
-      <hr />
-      <div className="m-4">
-        <BlockInput />
-      </div>
-      <hr />
-      {/* <DemoRichTextInputStyler /> */}
-      {/* <DemoDnd /> */}
+    <div className="mt-10 p-4">
       <BlockEditor id="1" />
       <hr />
       <div className="p-2 flex items-center justify-center">
@@ -25,7 +14,7 @@ function App() {
           <EllipsisVertical />
         </PanelPopover>
       </div>
-    </>
+    </div>
   )
 }
 

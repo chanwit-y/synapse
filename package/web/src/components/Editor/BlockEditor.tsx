@@ -10,16 +10,16 @@ type BlockProps = {
 const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 
 	const [items, setItems] = useState([
-		{ id: '1', content: '1', color: '#ff6b6b', command: 'p' },
-		{ id: '2', content: '2', color: '#4ecdc4', command: 'h1' },
-		{ id: '3', content: '3', color: '#45b7d1', command: 'h2' },
-		{ id: '4', content: '4', color: '#96ceb4', command: 'p' },
-		{ id: '5', content: '5', color: '#feca57', command: 'p' },
-		{ id: '6', content: '6', color: '#ff9ff3', command: 'p' },
-		{ id: '7', content: '7', color: '#54a0ff', command: 'p' },
+		{ id: '1', content: '1', color: '#ff6b6b', command: '' },
+		{ id: '2', content: '2', color: '#4ecdc4', command: '' },
+		{ id: '3', content: '3', color: '#45b7d1', command: '' },
+		{ id: '4', content: '4', color: '#96ceb4', command: '' },
+		{ id: '5', content: '5', color: '#feca57', command: '' },
+		{ id: '6', content: '6', color: '#ff9ff3', command: '' },
+		{ id: '7', content: '7', color: '#54a0ff', command: '' },
 	]);
 
-	const [editingItemId, setEditingItemId] = useState<string | null>(null);
+	const [focusedItemId, setFocusedItemId] = useState<string | null>(null);
 
 	const handleDragEnd = (event: DragEndEvent) => {
 		const { active, over } = event;
@@ -50,9 +50,13 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 		newItems.splice(currentIndex + 1, 0, newItem);
 		setItems(newItems);
 
-		// Set the new item to editing mode after the component renders
+		// Set the new item to be focused after the component renders
 		setTimeout(() => {
-			setEditingItemId(newItem.id);
+			setFocusedItemId(newItem.id);
+			// Clear focus state after a short delay to avoid re-focusing
+			setTimeout(() => {
+				setFocusedItemId(null);
+			}, 100);
 		}, 0);
 	};
 
