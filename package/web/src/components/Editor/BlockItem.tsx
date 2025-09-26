@@ -1,6 +1,6 @@
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ElementRef } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
+import { forwardRef, useCallback, useEffect, useMemo, useRef, useState, type ElementRef } from "react";
 
 
 type BlockItemProps = {
@@ -48,7 +48,7 @@ const BlockItem = forwardRef<ElementRef<"div">, BlockItemProps>(
 		}, [isEditing])
 
 		const display = useMemo(() => {
-			switch(command) {
+			switch (command) {
 				case "p":
 					return <p>{value}</p>
 				case "h1":
@@ -61,22 +61,22 @@ const BlockItem = forwardRef<ElementRef<"div">, BlockItemProps>(
 			}
 		}, [command, value])
 
-	const handleClickEditor = useCallback(() => {
-		onEditMode(id)
-		// Use setTimeout to ensure the input is rendered before focusing
-		setTimeout(() => {
-			inputRef.current?.focus()
-		}, 0)
-	}, [id, onEditMode])
+		const handleClickEditor = useCallback(() => {
+			onEditMode(id)
+			// Use setTimeout to ensure the input is rendered before focusing
+			setTimeout(() => {
+				inputRef.current?.focus()
+			}, 0)
+		}, [id, onEditMode])
 
 
 
-	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === 'Enter') {
-			e.preventDefault()
-			onAddNewItem(id)
-		}
-	}, [id, onAddNewItem])
+		const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+			if (e.key === 'Enter') {
+				e.preventDefault()
+				onAddNewItem(id)
+			}
+		}, [id, onAddNewItem])
 
 		const style = {
 			transform: CSS.Transform.toString(transform),

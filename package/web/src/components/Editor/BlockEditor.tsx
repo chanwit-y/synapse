@@ -1,7 +1,7 @@
 import { closestCenter, DndContext, type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { forwardRef, useState, type ElementRef } from "react";
-import BlockInput from "./BlockInput";
+import BlockItem from "./BlockItem";
 
 
 type BlockProps = {
@@ -60,36 +60,29 @@ const BlockEditor = forwardRef<ElementRef<"div">, BlockProps>(() => {
 		}, 0);
 	};
 
-	return (<div className="h-dvh"><DndContext
-		collisionDetection={closestCenter}
-		onDragEnd={handleDragEnd}
-	>
-		<SortableContext
-			items={items.map((item) => item.id)}
-			strategy={verticalListSortingStrategy}
+	return (
+		<DndContext
+			collisionDetection={closestCenter}
+			onDragEnd={handleDragEnd}
 		>
-			{items.map((item) => (
-				<BlockInput
-					key={item.id}
-					id={item.id}
-					onAddNewItem={handleAddNewItem}
-					shouldFocus={focusedItemId === item.id}
-				/>
-				// <BlockItem
-				// 	key={item.id}
-				// 	id={item.id}
-				// 	color={item.color}
-				// 	isEditing={editingItemId === item.id}
-				// 	command={item.command as any}
-				// 	onEditMode={(id) => {
-				// 		setEditingItemId(id);
-				// 	}}
-				// 	onAddNewItem={handleAddNewItem} />
-			))}
-		</SortableContext>
-	</DndContext>
-	<pre>{JSON.stringify(items, null, 2)}</pre>
-	</div>
+			<SortableContext
+				items={items.map((item) => item.id)}
+				strategy={verticalListSortingStrategy}
+			>
+				{items.map((item) => (
+					<BlockItem
+						key={item.id}
+						id={item.id}
+						color={item.color}
+						isEditing={editingItemId === item.id}
+						command={item.command as any}
+						onEditMode={(id) => {
+							setEditingItemId(id);
+						}}
+						onAddNewItem={handleAddNewItem} />
+				))}
+			</SortableContext>
+		</DndContext>
 	)
 })
 

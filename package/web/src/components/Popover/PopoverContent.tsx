@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import type { PopoverContentProps } from './types';
 import { usePopoverContext } from './PopoverContext';
+import type { PopoverContentProps } from './types';
 import { cn } from './utils';
 
 export const PopoverContent: React.FC<PopoverContentProps> = ({
   children,
   className,
   style,
-  sideOffset = 8,
-  align = 'center',
-  avoidCollisions = true,
+  // sideOffset = 8,
+  // align = 'center',
+  // avoidCollisions = true,
   width,
   height,
   minWidth,
@@ -51,6 +51,7 @@ export const PopoverContent: React.FC<PopoverContentProps> = ({
         ...style,
       }}
       data-state={isOpen ? 'open' : 'closed'}
+    // onMouseLeave={onMouseLeave}
     >
       {children}
     </div>
