@@ -44,6 +44,8 @@ export type askAIType = {
 }
 
 export const askAI = async ({ q, retreiver, llm }: askAIType) => {
+    console.log(123);
+    
     const results = await retreiver.invoke(q);
     const ctx = results.map((d) => d.pageContent).slice(0, 5).join('\n---\n')
     const messages = [
@@ -55,27 +57,20 @@ export const askAI = async ({ q, retreiver, llm }: askAIType) => {
         `),
         new HumanMessage(q),
     ]
+
+    console.log(456);
+    
     const bindedToolsLLM = llm.bindTools!([openAISDKChat])
     let executor = await bindedToolsLLM.invoke(messages)
 
-    console.log(executor);
+    console.log(789);
     
     messages.push(executor)
     if(executor.tool_calls){
-        console.log(executor.tool_calls);
-        
         for (const toolCall of executor.tool_calls) {
             const selectedTool = toolsByName[toolCall.name as keyof typeof toolsByName]
             if (!selectedTool) continue;
-
             const toolResult = await selectedTool.invoke(toolCall);
-
-            console.log("result");
-            console.log("result");
-            console.log("result");
-            
-            console.log(toolResult);
-            
             messages.push(new ToolMessage({
                 tool_call_id: toolCall.id!,
                 name: toolCall.name,
@@ -84,14 +79,10 @@ export const askAI = async ({ q, retreiver, llm }: askAIType) => {
         }
 
         executor = await bindedToolsLLM.invoke(messages);
-
-        console.log("executor");
-        console.log("executor");
-        console.log("executor");
-        
-        console.log(executor);
-        
     }
+
+    console.log(101112);
+    
 
     return executor.content
 }
