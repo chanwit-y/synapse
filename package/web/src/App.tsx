@@ -1,6 +1,5 @@
 import { EllipsisVertical } from "lucide-react"
 import BlockEditor from "./components/Editor/BlockEditor"
-import BlockInput from "./components/Editor/BlockInput"
 import PanelPopover from "./components/PanelPopover"
 
 function App() {
