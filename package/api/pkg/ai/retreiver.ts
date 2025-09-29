@@ -10,7 +10,6 @@ import path from 'path';
 import { openAIChat, openAISDKChat } from "./tools/openai_chat";
 import { toolsByName } from "./tools";
 import { NO_ANSWER_MESSAGE } from "../constant/ai";
-import { log } from "console";
 
 dotenv.config({
     path: path.resolve(__dirname, '../../.env'),
@@ -58,12 +57,10 @@ export const askAI = async ({ q, retreiver, llm }: askAIType) => {
         new HumanMessage(q),
     ]
 
-    console.log(456);
-    
     const bindedToolsLLM = llm.bindTools!([openAISDKChat])
     let executor = await bindedToolsLLM.invoke(messages)
-
-    console.log(789);
+    
+    console.log(456);
     
     messages.push(executor)
     if(executor.tool_calls){
@@ -81,7 +78,7 @@ export const askAI = async ({ q, retreiver, llm }: askAIType) => {
         executor = await bindedToolsLLM.invoke(messages);
     }
 
-    console.log(101112);
+    console.log(789);
     
 
     return executor.content
