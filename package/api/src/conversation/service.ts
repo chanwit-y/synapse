@@ -1,9 +1,9 @@
-import { createChatRoom, deleteChatRoom, getConversationList, openAIChat } from "../../pkg/ai/conversation_room";
+import { createChatRoom, removeAllConversationList, deleteChatRoom, getConversationList, openAIChat, removeConversationListById } from "../../pkg/ai/conversation_room";
 import { and, eq } from "drizzle-orm";
 import db from "../../pkg/db/conn";
 import { noteTable } from "../../pkg/db/schema/note";
 import { noteRoomTable } from "../../pkg/db/schema/note_room";
-import { TChatModel, TCreateConversationRoomModel, TDeleteConversationRoomModel } from "./model/req";
+import { TChatModel, TCreateConversationRoomModel, TDeleteConversationListByIdModel, TDeleteConversationRoomModel } from "./model/req";
 import { TChatResponseModel, TCreateConversationResponseModel, TDeleteConversationResponseModel } from "./model/res";
 
 export const createConversationRoom = async (body: TCreateConversationRoomModel): Promise<TCreateConversationResponseModel> => {
@@ -89,7 +89,7 @@ export const deleteConversationRoom = async (body: TDeleteConversationRoomModel)
     }
 }
 
-export const retrieveConversationList = async (conversationId: string)=> {
+export const retrieveConversationList = async (conversationId: string) => {
     const conversation = await getConversationList(conversationId)
     return {
         success: true,
@@ -100,7 +100,7 @@ export const retrieveConversationList = async (conversationId: string)=> {
     }
 }
 
-export const chat = async (body: TChatModel): Promise<TChatResponseModel>    => {
+export const chat = async (body: TChatModel): Promise<TChatResponseModel> => {
     const { conversationId, message, noteId } = body
     const noteExist = await db.select().from(noteTable).where(eq(noteTable.id, noteId)).limit(1)
     if (noteExist.length === 0) {
@@ -132,6 +132,29 @@ export const chat = async (body: TChatModel): Promise<TChatResponseModel>    => 
         message: "Conversation chat successfully",
         data: {
             message: response
+        }
+    }
+}
+
+export const deleteConversationList = async (conversationId: string) => {
+    await removeAllConversationList(conversationId)
+    return {
+        success: true,
+        message: "Conversation deleted successfully",
+        data: {
+            success: true
+        }
+    }
+}
+
+export const deleteConversationListById = async (body: TDeleteConversationListByIdModel) => {
+    const { conversationId, itemId } = body
+    await removeConversationListById(conversationId, itemId)
+    return {
+        success: true,
+        message: "Conversation deleted successfully",
+        data: {
+            success: true
         }
     }
 }

@@ -22,7 +22,18 @@ export const retrieveConversationModel = t.Object({
     conversationId: t.String()
 })
 
+export const deleteAllConversationModel = t.Object({
+    conversationId: t.String()
+})
+
+export const deleteConversationListByIdModel = t.Object({
+    conversationId: t.String(),
+    itemId: t.String()
+})
+
 export type TCreateConversationRoomModel = Static<typeof createConversationRoomModel>
 export type TDeleteConversationRoomModel = Static<typeof deleteConversationRoomModel>
 export type TChatModel = Static<typeof chatModel>
 export type TRetrieveConversationModel = Static<typeof retrieveConversationModel>
+export type TDeleteAllConversationModel = Static<typeof deleteAllConversationModel>
+export type TDeleteConversationListByIdModel = Static<typeof deleteConversationListByIdModel>

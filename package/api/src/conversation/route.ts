@@ -1,6 +1,6 @@
 import { Elysia } from "elysia"
-import { chat, createConversationRoom, deleteConversationRoom, retrieveConversationList } from "./service"
-import { chatModel, createConversationRoomModel, deleteConversationRoomModel, retrieveConversationModel } from "./model/req"
+import { chat, createConversationRoom, deleteConversationList, deleteConversationListById, deleteConversationRoom, retrieveConversationList } from "./service"
+import { chatModel, createConversationRoomModel, deleteAllConversationModel, deleteConversationListByIdModel, deleteConversationRoomModel, retrieveConversationModel } from "./model/req"
 
 export default new Elysia({
     prefix: "/conversation"
@@ -12,4 +12,8 @@ export default new Elysia({
     body: retrieveConversationModel
 }).post("chat", async ({ body }) => await chat(body), {
     body: chatModel
+}).post("delete-all", async ({ body }) => await deleteConversationList(body.conversationId), {
+    body: deleteAllConversationModel
+}).post("delete-by-id", async ({ body }) => await deleteConversationListById(body), {
+    body: deleteConversationListByIdModel
 })

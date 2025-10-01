@@ -25,6 +25,23 @@ export const getConversationList = async (convId: string) => {
     return conversation
 }
 
+export const removeAllConversationList = async(convId: string) => {
+    const lst = await client.conversations.items.list(convId)
+    console.log(JSON.stringify(lst, null, 2));
+    
+    for (const item of lst.data) {
+        await client.conversations.items.delete(item.id!,{
+            conversation_id: convId
+        })
+    }
+}
+
+export const removeConversationListById = async(convId: string, itemId: string) => {
+    await client.conversations.items.delete(itemId,{
+        conversation_id: convId
+    })
+}
+
 const responseSchema: { [key: string]: unknown } = {
     type: "object",
     additionalProperties: false,
@@ -97,6 +114,8 @@ export const openAIChat = async (convId: string, content: TChatModel, instructio
     console.log("usage: ", completion.usage);
     console.log("token usage: ", completion.usage?.total_tokens);
 
+    // const jsonParesed = JSON.parse(completion.output_text)
+    // jsonParesed.content = jsonParesed.content.replace(/<br\s*\/?>/g, "\n")
 
     return JSON.parse(completion.output_text)
 }
