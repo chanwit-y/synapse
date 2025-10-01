@@ -25,6 +25,19 @@ export const getConversationList = async (convId: string) => {
     return conversation
 }
 
+const responseSchema: { [key: string]: unknown } = {
+    type: "object",
+    additionalProperties: false,
+    properties: {
+        content: {
+            type: "string",
+            description: "The response message must be HTML5 format",
+            additionalProperties: false,
+        },
+    },
+    required: ["content"]
+}
+
 export const openAIChat = async (convId: string, content: TChatModel, instructions: string) => {
 
     let contentInput: ResponseInputContent = {} as ResponseInputContent
@@ -58,9 +71,16 @@ export const openAIChat = async (convId: string, content: TChatModel, instructio
         model: process.env.OPEN_AI_GPT_4_1_MODEL,
         conversation: convId,
         instructions: instructions,
-        tools:[
+        text: {
+            format: {
+                type: "json_schema",
+                name: "response",
+                schema: responseSchema
+            }
+        },
+        tools: [
             {
-                type:"web_search",
+                type: "web_search",
             }
         ],
         input: [
@@ -76,7 +96,7 @@ export const openAIChat = async (convId: string, content: TChatModel, instructio
 
     console.log("usage: ", completion.usage);
     console.log("token usage: ", completion.usage?.total_tokens);
-    
 
-    return completion.output_text
+
+    return JSON.parse(completion.output_text)
 }
